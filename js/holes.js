@@ -6,8 +6,8 @@
 
 class HoleManager {
   constructor() {
-    this.chunk = 400;      // 청크 한 변(px)
-    this.safeRadius = 420; // 원점 주변 구멍 금지 반경
+    this.chunk = 600;      // 청크 한 변(px)
+    this.safeRadius = 520; // 원점 주변 구멍 금지 반경
   }
 
   // (cx, cy, k) -> [0, 1) 결정적 의사난수
@@ -18,8 +18,8 @@ class HoleManager {
 
   // 청크 하나의 구멍 (없으면 null)
   holeAt(cx, cy) {
-    if (this.hash(cx, cy, 0) >= 0.22) return null; // 개수는 적게
-    const rx = 75 + this.hash(cx, cy, 3) * 45;     // 대신 크게 (75~120)
+    if (this.hash(cx, cy, 0) >= 0.25) return null; // 개수는 적게
+    const rx = CONFIG.player.radius * (10 + this.hash(cx, cy, 3) * 10); // 펭귄의 10~20배 (130~260)
     const x = (cx + 0.15 + this.hash(cx, cy, 1) * 0.7) * this.chunk;
     const y = (cy + 0.15 + this.hash(cx, cy, 2) * 0.7) * this.chunk;
     if (x * x + y * y < this.safeRadius * this.safeRadius) return null;

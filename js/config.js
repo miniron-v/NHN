@@ -2,10 +2,10 @@
 const CONFIG = {
   player: {
     radius: 13,
-    accel: 850,        // 입력 시 가속도 (px/s^2) - 빙판이라 즉발이 아님
+    accel: 1000,       // 입력 시 가속도 (px/s^2) - 빙판이라 즉발이 아님
     friction: 0.45,    // 초당 속도 잔존율. 손을 놓으면 무난히 감속
     turnGrip: 0.35,    // 진행 방향과 다른(횡) 입력의 가속 효율. 낮을수록 방향 전환이 어려움
-    maxSpeed: 400,     // 속도 상한 (px/s)
+    maxSpeed: 470,     // 속도 상한 (px/s)
     maxHp: 100,
     pickupRange: 70,   // XP 젬 흡수 반경
     xpBase: 10,        // 레벨업 필요 XP = xpBase + xpGrowth * (level - 1)
