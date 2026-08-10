@@ -23,6 +23,9 @@
 //   }
 //   choices의 각 항목: {id, name, desc, apply} - id는 아이콘 식별자
 //   (icicle | frostRing | orbital | heal)
+//   holes.js  -> class HoleManager()
+//     .check(player) -> boolean (구멍 추락 여부), .draw(ctx, player)
+//     구멍은 청크 해시 기반 절차 생성 (상태 저장 없음, reset 불필요)
 
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
@@ -31,12 +34,13 @@ addEventListener('resize', resize);
 resize();
 
 const keys = {};
-let state, player, enemyMgr, weaponMgr, elapsed, levelUpChoices;
+let state, player, enemyMgr, weaponMgr, holeMgr, elapsed, levelUpChoices;
 
 function init() {
   player = new Player(0, 0);
   enemyMgr = new EnemyManager();
   weaponMgr = new WeaponManager();
+  holeMgr = new HoleManager();
   enemyMgr.onDeath = (x, y, xp) => {
     for (let i = 0; i < CONFIG.gem.dropCount; i++) {
       const s = CONFIG.gem.scatter;
@@ -77,7 +81,8 @@ function update(dt) {
   player.update(dt, keys);
   enemyMgr.update(dt, player, elapsed);
   weaponMgr.update(dt, player, enemyMgr.enemies);
-  if (player.hp <= 0) state = 'gameover';
+  if (holeMgr.check(player)) { player.hp = 0; state = 'gameover'; } // 구멍 추락 즉사
+  else if (player.hp <= 0) state = 'gameover';
   else if (player.pendingLevels > 0) {
     levelUpChoices = weaponMgr.getUpgradeChoices();
     state = 'levelup';
@@ -107,6 +112,7 @@ function draw() {
   ctx.save();
   // 카메라: 플레이어를 화면 중앙에 고정
   ctx.translate(canvas.width / 2 - player.x, canvas.height / 2 - player.y);
+  holeMgr.draw(ctx, player);
   weaponMgr.draw(ctx);
   enemyMgr.draw(ctx);
   player.draw(ctx);

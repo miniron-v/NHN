@@ -21,7 +21,7 @@ class WeaponManager {
   }
   frostStats() {
     const c = CONFIG.weapons.frostRing, l = this.levels.frostRing;
-    return { damage: c.damage + 3 * (l - 1), range: c.range + 20 * (l - 1), tick: c.tick };
+    return { damage: c.damage + 3 * (l - 1), range: c.range + 50 * (l - 1), tick: c.tick };
   }
   orbitalStats() {
     const c = CONFIG.weapons.orbital, l = this.levels.orbital;
@@ -119,7 +119,7 @@ class WeaponManager {
     const names = { icicle: '고드름', frostRing: '서리 고리', orbital: '회전 눈덩이' };
     const descs = {
       icicle: (l) => `고드름 +1개 (총 ${l + 1}개)`,
-      frostRing: () => '범위 +20',
+      frostRing: () => '범위 +50',
       orbital: (l) => `눈덩이 +1개 (총 ${l + 1}개)`,
     };
     const pool = [];
@@ -188,7 +188,7 @@ class WeaponManager {
     ctx.save();
     ctx.font = 'bold 13px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = '#f5a8a8';
     for (const pp of this.popups) {
       ctx.globalAlpha = Math.max(0, pp.t / 0.7);
       ctx.fillText(pp.text, pp.x, pp.y);
