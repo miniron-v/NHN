@@ -41,6 +41,8 @@ class Player {
     if (this.invuln > 0) return;
     this.hp -= n;
     this.invuln = CONFIG.player.invulnTime;
+    FX.hurt();
+    FX.shake(6);
   }
 
   gainXP(n) {

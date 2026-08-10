@@ -47,6 +47,14 @@ const CONFIG = {
     hail: { damage: 22, cooldown: 2.2, stones: 2, radius: 70, delay: 0.6, spawnRange: 380 },
     // 유도 눈송이: 적을 쫓는 유도탄
     flakes: { damage: 9, cooldown: 1.5, count: 2, speed: 250, turnRate: 4, radius: 7, life: 4 },
+    // 오로라 광선: 플레이어 주위 회전 지속 광선
+    aurora: { damage: 9, tick: 0.25, beams: 1, length: 260, width: 14, rotSpeed: 0.9 },
+    // 서리 지뢰: 설치 후 적 접근 시 폭발
+    mines: { damage: 32, cooldown: 2.6, count: 2, radius: 95, triggerR: 42, spawnRange: 300, life: 12 },
+    // 눈사태: 굴러가며 커지는 거대 눈덩이
+    avalanche: { damage: 26, cooldown: 4, count: 1, radius: 26, growth: 16, speed: 270, dist: 900 },
+    // 혹한: 전장 전체 적 감속
+    freeze: { cooldown: 6, duration: 1.8, factor: 0.35 },
   },
   gem: { radius: 5, magnetSpeed: 380, dropCount: 2, scatter: 48 },
   camera: { zoom: 1.2 }, // 1.2배 확대(줌인)

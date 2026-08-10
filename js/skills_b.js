@@ -73,6 +73,7 @@ registerWeapon({
           if (Math.hypot(e.x - h.x, e.y - h.y) < s.radius + e.radius) mgr.hitEnemy(e, s.damage);
         }
         st.rings.push({ x: h.x, y: h.y, t: 0.25 });
+        FX.shake(3);
       }
     }
     st.stones = st.stones.filter((h) => h.t < s.delay);

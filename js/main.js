@@ -41,12 +41,15 @@ function init() {
   enemyMgr = new EnemyManager();
   weaponMgr = new WeaponManager();
   holeMgr = new HoleManager();
-  enemyMgr.onDeath = (x, y, xp) => {
+  enemyMgr.onDeath = (e) => {
     for (let i = 0; i < CONFIG.gem.dropCount; i++) {
       const s = CONFIG.gem.scatter;
-      weaponMgr.spawnGem(x + (Math.random() - 0.5) * s, y + (Math.random() - 0.5) * s, xp);
+      weaponMgr.spawnGem(e.x + (Math.random() - 0.5) * s, e.y + (Math.random() - 0.5) * s, e.xp);
     }
+    FX.burst(e.x, e.y, e.color, e.type === 'boss' ? 45 : 8);
+    if (e.type === 'boss') { FX.shake(14); FX.hitstop(0.12); FX.flash('#ffffff', 0.45); }
   };
+  FX.reset();
   elapsed = 0;
   levelUpChoices = null;
   state = 'playing';
@@ -103,8 +106,9 @@ function drawBackground() {
 
 function draw() {
   ctx.save();
-  // 카메라: 줌아웃 + 플레이어 화면 중앙 고정
-  ctx.translate(canvas.width / 2, canvas.height / 2);
+  // 카메라: 줌 + 플레이어 화면 중앙 고정 (+ 흔들림)
+  const off = FX.offset();
+  ctx.translate(canvas.width / 2 + off.x, canvas.height / 2 + off.y);
   ctx.scale(CONFIG.camera.zoom, CONFIG.camera.zoom);
   ctx.translate(-player.x, -player.y);
   drawBackground();
@@ -112,8 +116,10 @@ function draw() {
   weaponMgr.draw(ctx);
   enemyMgr.draw(ctx);
   player.draw(ctx);
+  FX.drawWorld(ctx);
   weaponMgr.drawPopups(ctx); // 데미지 숫자는 최상위 레이어
   ctx.restore();
+  FX.drawScreen(ctx, canvas);
   UI.drawHUD(ctx, player, elapsed, canvas);
   if (state === 'levelup') UI.drawLevelUp(ctx, levelUpChoices, canvas);
   if (state === 'paused') UI.drawPause(ctx, canvas);
@@ -124,7 +130,8 @@ let last = performance.now();
 function loop(now) {
   const dt = Math.min((now - last) / 1000, 0.05);
   last = now;
-  if (state === 'playing') update(dt);
+  if (state === 'playing' && FX.hitstopT <= 0) update(dt);
+  FX.update(dt);
   draw();
   requestAnimationFrame(loop);
 }

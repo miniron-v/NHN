@@ -78,8 +78,10 @@ class EnemyManager {
     for (const e of this.enemies) {
       const dx = player.x - e.x, dy = player.y - e.y;
       const d = Math.hypot(dx, dy) || 1;
-      e.x += (dx / d) * e.speed * dt;
-      e.y += (dy / d) * e.speed * dt;
+      const slow = e._slowT > 0 ? e._slowF : 1; // 혹한(freeze) 감속
+      e.x += (dx / d) * e.speed * slow * dt;
+      e.y += (dy / d) * e.speed * slow * dt;
+      if (e._slowT > 0) e._slowT -= dt;
       if (e.flashT > 0) e.flashT -= dt;
       if (d < e.radius + player.radius) player.takeDamage(e.damage);
     }
@@ -88,7 +90,7 @@ class EnemyManager {
       const e = this.enemies[i];
       if (e.hp <= 0) {
         this.enemies.splice(i, 1);
-        if (this.onDeath) this.onDeath(e.x, e.y, e.xp);
+        if (this.onDeath) this.onDeath(e);
       }
     }
   }
@@ -98,35 +100,52 @@ class EnemyManager {
       ctx.lineWidth = 2;
       ctx.fillStyle = e.color;
       ctx.strokeStyle = '#1e3a4a'; // 어두운 외곽선으로 배경과 분리
-      if (e.type === 'boss') { // 거대 진청색 몸통 + 굵은 외곽선 + 얼음 뿔 + 눈
+      if (e.type === 'boss') { // 거대 북극곰: 회백색 몸통 + 둥근 귀 + 주둥이 + 어두운 눈
         ctx.lineWidth = 4;
+        ctx.fillStyle = '#e8eef2';
+        ctx.beginPath(); // 귀 2개 먼저 (아랫부분이 몸통에 가려짐)
+        ctx.arc(e.x - e.radius * 0.6, e.y - e.radius * 0.8, e.radius * 0.28, 0, Math.PI * 2);
+        ctx.fill(); ctx.stroke();
         ctx.beginPath();
+        ctx.arc(e.x + e.radius * 0.6, e.y - e.radius * 0.8, e.radius * 0.28, 0, Math.PI * 2);
+        ctx.fill(); ctx.stroke();
+        ctx.beginPath(); // 몸통이 귀 윤곽선을 덮음
         ctx.arc(e.x, e.y, e.radius, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-        for (const sa of [-2.1, -1.57, -1.04]) { // 머리 위 얼음 스파이크 3개
-          ctx.beginPath();
-          ctx.moveTo(e.x + Math.cos(sa - 0.18) * e.radius, e.y + Math.sin(sa - 0.18) * e.radius);
-          ctx.lineTo(e.x + Math.cos(sa) * e.radius * 1.45, e.y + Math.sin(sa) * e.radius * 1.45);
-          ctx.lineTo(e.x + Math.cos(sa + 0.18) * e.radius, e.y + Math.sin(sa + 0.18) * e.radius);
-          ctx.closePath();
-          ctx.fill();
-          ctx.stroke();
-        }
-        ctx.fillStyle = '#ff5a4a'; // 붉은 눈 2개
+        ctx.fill(); ctx.stroke();
+        ctx.lineWidth = 2;
+        ctx.fillStyle = '#f6fafc'; // 주둥이(밝은 타원)
         ctx.beginPath();
-        ctx.arc(e.x - e.radius * 0.35, e.y - e.radius * 0.15, e.radius * 0.12, 0, Math.PI * 2);
-        ctx.arc(e.x + e.radius * 0.35, e.y - e.radius * 0.15, e.radius * 0.12, 0, Math.PI * 2);
+        ctx.ellipse(e.x, e.y + e.radius * 0.35, e.radius * 0.42, e.radius * 0.3, 0, 0, Math.PI * 2);
+        ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#1e3a4a'; // 검은 코 + 어두운 눈 2개
+        ctx.beginPath();
+        ctx.ellipse(e.x, e.y + e.radius * 0.26, e.radius * 0.14, e.radius * 0.1, 0, 0, Math.PI * 2);
         ctx.fill();
-      } else if (e.type === 'snowman') {
-        ctx.beginPath(); // 몸통(아래 큰 원) 먼저
-        ctx.arc(e.x, e.y + e.radius * 0.3, e.radius, 0, Math.PI * 2);
+        ctx.beginPath();
+        ctx.arc(e.x - e.radius * 0.3, e.y - e.radius * 0.12, e.radius * 0.09, 0, Math.PI * 2);
+        ctx.arc(e.x + e.radius * 0.3, e.y - e.radius * 0.12, e.radius * 0.09, 0, Math.PI * 2);
         ctx.fill();
-        ctx.stroke();
-        ctx.beginPath(); // 머리(위 작은 원)가 몸통 윤곽선을 덮음
-        ctx.arc(e.x, e.y - e.radius * 0.6, e.radius * 0.65, 0, Math.PI * 2);
+      } else if (e.type === 'snowman') { // 하프 물범: 통통한 타원 몸통 + 둥근 머리 + 꼬리
+        const hx = e.x + e.radius * 0.8, hy = e.y - e.radius * 0.2;
+        ctx.beginPath(); // 꼬리 지느러미(몸통 뒤쪽) 먼저
+        ctx.moveTo(e.x - e.radius * 0.9, e.y + e.radius * 0.1);
+        ctx.lineTo(e.x - e.radius * 1.5, e.y - e.radius * 0.35);
+        ctx.lineTo(e.x - e.radius * 1.5, e.y + e.radius * 0.55);
+        ctx.closePath(); ctx.fill(); ctx.stroke();
+        ctx.beginPath(); // 가로로 긴 타원 몸통이 꼬리 밑동을 덮음
+        ctx.ellipse(e.x, e.y + e.radius * 0.1, e.radius * 1.1, e.radius * 0.7, 0, 0, Math.PI * 2);
+        ctx.fill(); ctx.stroke();
+        ctx.beginPath(); // 머리가 몸통 윤곽선을 덮음
+        ctx.arc(hx, hy, e.radius * 0.55, 0, Math.PI * 2);
+        ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#1e3a4a'; // 점 눈 2개 + 작은 코
+        ctx.beginPath();
+        ctx.arc(hx - e.radius * 0.2, hy - e.radius * 0.1, e.radius * 0.08, 0, Math.PI * 2);
+        ctx.arc(hx + e.radius * 0.2, hy - e.radius * 0.1, e.radius * 0.08, 0, Math.PI * 2);
         ctx.fill();
-        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(hx, hy + e.radius * 0.12, e.radius * 0.06, 0, Math.PI * 2);
+        ctx.fill();
       } else if (e.type === 'golem') {
         ctx.fillRect(e.x - e.radius, e.y - e.radius * 0.8, e.radius * 2, e.radius * 1.6);
         ctx.strokeRect(e.x - e.radius, e.y - e.radius * 0.8, e.radius * 2, e.radius * 1.6);
@@ -150,6 +169,13 @@ class EnemyManager {
         ctx.strokeStyle = '#e8f8ff';
         ctx.lineWidth = 1.5;
         ctx.stroke();
+      }
+      // 빙결 틴트: 혹한 감속 중 파랗게
+      if (e._slowT > 0) {
+        ctx.fillStyle = 'rgba(90, 180, 255, 0.35)';
+        ctx.beginPath();
+        ctx.arc(e.x, e.y, e.radius * 1.1, 0, Math.PI * 2);
+        ctx.fill();
       }
       // 피격 플래시: 흰색 반투명 원으로 덮어 번쩍임 표현
       if (e.flashT > 0) {

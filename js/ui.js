@@ -159,6 +159,61 @@ const UI = {
         ctx.lineTo(ex + Math.cos(a - Math.PI * 0.75) * size * 0.18, ey + Math.sin(a - Math.PI * 0.75) * size * 0.18);
         ctx.stroke();
       }
+    } else if (id === 'aurora') {
+      ctx.fillStyle = 'rgba(120, 255, 210, 0.8)';
+      [[-0.25, 0], [0.25, 0]].forEach(([dx]) => {
+        const bx = cx + dx * size;
+        ctx.beginPath();
+        ctx.moveTo(bx - size * 0.05, cy - size * 0.6);
+        ctx.lineTo(bx + size * 0.22, cy - size * 0.6);
+        ctx.lineTo(bx + size * 0.05, cy + size * 0.6);
+        ctx.lineTo(bx - size * 0.22, cy + size * 0.6);
+        ctx.closePath();
+        ctx.fill();
+      });
+    } else if (id === 'mines') {
+      ctx.fillStyle = '#2a4a80';
+      ctx.beginPath();
+      ctx.arc(cx, cy + size * 0.15, size * 0.42, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#8ca8c8';
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - size * 0.27);
+      ctx.lineTo(cx + size * 0.12, cy - size * 0.5);
+      ctx.stroke();
+      ctx.fillStyle = '#ffe9a0';
+      ctx.beginPath();
+      ctx.arc(cx + size * 0.12, cy - size * 0.5, size * 0.1, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (id === 'avalanche') {
+      ctx.fillStyle = '#fff';
+      ctx.strokeStyle = '#5a7a94';
+      ctx.beginPath();
+      ctx.arc(cx, cy, size * 0.55, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(cx - size * 0.12, cy - size * 0.08, size * 0.3, Math.PI * 0.2, Math.PI * 0.95);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(cx + size * 0.15, cy + size * 0.12, size * 0.18, Math.PI * 1.1, Math.PI * 1.9);
+      ctx.stroke();
+    } else if (id === 'freeze') {
+      ctx.strokeStyle = '#a8dcff';
+      ctx.lineWidth = 2;
+      for (let i = 0; i < 6; i++) {
+        const a = (i / 6) * Math.PI * 2;
+        const ex = cx + Math.cos(a) * size * 0.62, ey = cy + Math.sin(a) * size * 0.62;
+        const mx = cx + Math.cos(a) * size * 0.38, my = cy + Math.sin(a) * size * 0.38;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(ex, ey);
+        ctx.moveTo(mx, my);
+        ctx.lineTo(mx + Math.cos(a + Math.PI * 0.7) * size * 0.16, my + Math.sin(a + Math.PI * 0.7) * size * 0.16);
+        ctx.moveTo(mx, my);
+        ctx.lineTo(mx + Math.cos(a - Math.PI * 0.7) * size * 0.16, my + Math.sin(a - Math.PI * 0.7) * size * 0.16);
+        ctx.stroke();
+      }
     } else {
       // 알 수 없는 id 폴백: 기본 흰 원
       ctx.fillStyle = '#fff';
