@@ -94,16 +94,18 @@ class AltarManager {
         ctx.strokeStyle = '#e04040';
         ctx.lineWidth = 7;
         ctx.beginPath();
-        ctx.moveTo(a.x - 10, a.y + 10);
-        ctx.lineTo(a.x - 10, a.y - 2);
-        ctx.arc(a.x, a.y - 2, 10, Math.PI, 0); // 상단 반원
-        ctx.lineTo(a.x + 10, a.y + 10);
+        ctx.moveTo(a.x - 10, a.y - 10);
+        ctx.lineTo(a.x - 10, a.y + 2);
+        ctx.arc(a.x, a.y + 2, 10, Math.PI, 0, true); // 하단 반원 (열린 쪽이 위 = U자)
+        ctx.lineTo(a.x + 10, a.y - 10);
         ctx.stroke();
-        ctx.strokeStyle = '#3a6cd8'; // 파란 극 팁 2개
-        ctx.beginPath(); ctx.moveTo(a.x - 10, a.y + 4); ctx.lineTo(a.x - 10, a.y + 10); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(a.x + 10, a.y + 4); ctx.lineTo(a.x + 10, a.y + 10); ctx.stroke();
+        ctx.strokeStyle = '#3a6cd8'; // 파란 극 팁 2개 (위쪽)
+        ctx.beginPath(); ctx.moveTo(a.x - 10, a.y - 10); ctx.lineTo(a.x - 10, a.y - 4); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(a.x + 10, a.y - 10); ctx.lineTo(a.x + 10, a.y - 4); ctx.stroke();
       }
-      if (this.active === a && this.progress > 0) { // 제단 위 가로 프로그레스바 (좌→우)
+      // 제단 위 가로 프로그레스바 (좌→우) - altarsInView가 매 프레임 새 객체를
+      // 만들므로 참조가 아닌 key로 비교해야 한다
+      if (this.active && this.active.key === a.key && this.progress > 0) {
         const bw = R * 1.4, bh = 8, bx = a.x - bw / 2, by = a.y - R - 20;
         ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
         ctx.fillRect(bx, by, bw, bh);
