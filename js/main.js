@@ -78,6 +78,8 @@ addEventListener('keydown', (e) => {
 });
 addEventListener('keyup', (e) => { keys[e.code] = false; });
 addEventListener('contextmenu', (e) => e.preventDefault()); // 우클릭 메뉴 차단 (입력 꼬임 방지)
+// 포커스 이탈(알트탭/창 전환) 시 keyup 유실로 키가 눌린 채 고정되는 것 방지
+addEventListener('blur', () => { for (const k in keys) keys[k] = false; });
 canvas.addEventListener('click', (e) => {
   if (state !== 'levelup' || !levelUpChoices) return;
   const i = UI.levelUpCardRects(levelUpChoices, canvas)
