@@ -54,6 +54,7 @@ class EnemyManager {
       const d = Math.hypot(dx, dy) || 1;
       e.x += (dx / d) * e.speed * dt;
       e.y += (dy / d) * e.speed * dt;
+      if (e.flashT > 0) e.flashT -= dt;
       if (d < e.radius + player.radius) player.takeDamage(e.damage);
     }
     // 사망 처리
@@ -93,6 +94,13 @@ class EnemyManager {
           ctx.lineTo(e.x + Math.cos(a) * e.radius * 1.5, e.y + Math.sin(a) * e.radius * 1.5);
         }
         ctx.stroke();
+      }
+      // 피격 플래시: 흰색 반투명 원으로 덮어 번쩍임 표현
+      if (e.flashT > 0) {
+        ctx.fillStyle = 'rgba(255,255,255,0.75)';
+        ctx.beginPath();
+        ctx.arc(e.x, e.y, e.radius * 1.15, 0, Math.PI * 2);
+        ctx.fill();
       }
     }
   }

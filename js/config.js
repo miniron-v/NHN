@@ -3,7 +3,7 @@ const CONFIG = {
   player: {
     radius: 13,
     accel: 850,        // 입력 시 가속도 (px/s^2) - 빙판이라 즉발이 아님
-    friction: 0.25,    // 초당 속도 잔존율 (낮을수록 잘 안 미끄러짐). 0.25 = 1초 후 25% 유지
+    friction: 0.45,    // 초당 속도 잔존율 (낮을수록 잘 안 미끄러짐). 0.45 = 1초 후 45% 유지
     maxSpeed: 370,     // 속도 상한 (px/s)
     maxHp: 100,
     pickupRange: 70,   // XP 젬 흡수 반경
@@ -14,9 +14,9 @@ const CONFIG = {
   enemies: {
     // 종류: 눈송이 정령(약함/빠름), 눈사람(중간), 얼음 골렘(느림/강함)
     types: {
-      wisp:  { radius: 10, hp: 12,  speed: 95,  damage: 8,  xp: 1, color: '#9fd8ef' },
-      snowman:{ radius: 14, hp: 35,  speed: 60,  damage: 14, xp: 3, color: '#e8f4f8' },
-      golem: { radius: 20, hp: 110, speed: 40,  damage: 25, xp: 8, color: '#5b8ca8' },
+      wisp:  { radius: 10, hp: 12,  speed: 95,  damage: 8,  xp: 1,  color: '#9fd8ef' },
+      snowman:{ radius: 14, hp: 35,  speed: 60,  damage: 14, xp: 4,  color: '#e8f4f8' },
+      golem: { radius: 20, hp: 110, speed: 40,  damage: 25, xp: 12, color: '#5b8ca8' },
     },
     spawnInterval: 1.2,     // 기본 스폰 간격(초), 시간이 지나며 감소
     spawnIntervalMin: 0.25,
@@ -33,5 +33,5 @@ const CONFIG = {
     // 회전 눈덩이: 플레이어 주위 공전
     orbital: { damage: 12, radius: 9, dist: 70, rotSpeed: 2.5, count: 1 },
   },
-  gem: { radius: 5, magnetSpeed: 380, dropCount: 2, scatter: 14 },
+  gem: { radius: 5, magnetSpeed: 380, dropCount: 2, scatter: 48 },
 };

@@ -110,6 +110,7 @@ function draw() {
   weaponMgr.draw(ctx);
   enemyMgr.draw(ctx);
   player.draw(ctx);
+  weaponMgr.drawPopups(ctx); // 데미지 숫자는 최상위 레이어
   ctx.restore();
   UI.drawHUD(ctx, player, elapsed, canvas);
   if (state === 'levelup') UI.drawLevelUp(ctx, levelUpChoices, canvas);
