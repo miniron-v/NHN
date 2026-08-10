@@ -92,7 +92,7 @@ function update(dt) {
 // 설원 바닥 (카메라 변환 안에서 호출)
 function drawBackground() {
   const vw = canvas.width / CONFIG.camera.zoom, vh = canvas.height / CONFIG.camera.zoom;
-  ctx.fillStyle = '#dceef5';
+  ctx.fillStyle = '#7fadc4'; // 중간톤 빙하색 - 흰색 계열 개체가 도드라지게
   ctx.fillRect(player.x - vw / 2, player.y - vh / 2, vw, vh);
 }
 

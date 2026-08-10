@@ -195,6 +195,8 @@ class WeaponManager {
       if (def.draw) def.draw(this, ctx, def.stats(this.levels[id]), this.st(id));
     }
     ctx.fillStyle = '#5bc8f5';
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 1.5;
     for (const g of this.gems) {
       const r = CONFIG.gem.radius;
       ctx.beginPath();
@@ -204,6 +206,7 @@ class WeaponManager {
       ctx.lineTo(g.x - r, g.y);
       ctx.closePath();
       ctx.fill();
+      ctx.stroke();
     }
   }
 
@@ -214,8 +217,11 @@ class WeaponManager {
     ctx.font = 'bold 13px sans-serif';
     ctx.textAlign = 'center';
     ctx.fillStyle = '#f5a8a8';
+    ctx.strokeStyle = 'rgba(25, 45, 60, 0.9)'; // 어두운 테두리로 가독성 확보
+    ctx.lineWidth = 3;
     for (const pp of this.popups) {
       ctx.globalAlpha = Math.max(0, pp.t / 0.7);
+      ctx.strokeText(pp.text, pp.x, pp.y);
       ctx.fillText(pp.text, pp.x, pp.y);
     }
     ctx.restore();

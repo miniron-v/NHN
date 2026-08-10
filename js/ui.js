@@ -16,7 +16,7 @@ const UI = {
     ctx.fillRect(20, 42, 220, 10);
     ctx.fillStyle = '#5bc8f5';
     ctx.fillRect(20, 42, 220 * Math.min(1, player.xp / player.xpNeeded), 10);
-    ctx.fillStyle = '#234';
+    ctx.fillStyle = '#fff';
     ctx.font = '14px sans-serif';
     ctx.textAlign = 'left';
     ctx.fillText(`Lv ${player.level}`, 248, 52);

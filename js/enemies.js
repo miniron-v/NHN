@@ -68,25 +68,29 @@ class EnemyManager {
   }
 
   draw(ctx) {
+    ctx.lineWidth = 2;
     for (const e of this.enemies) {
       ctx.fillStyle = e.color;
+      ctx.strokeStyle = '#1e3a4a'; // 어두운 외곽선으로 배경과 분리
       if (e.type === 'snowman') {
         ctx.beginPath();
         ctx.arc(e.x, e.y + e.radius * 0.3, e.radius, 0, Math.PI * 2);
         ctx.arc(e.x, e.y - e.radius * 0.6, e.radius * 0.65, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = '#9bb8c4';
         ctx.stroke();
       } else if (e.type === 'golem') {
         ctx.fillRect(e.x - e.radius, e.y - e.radius * 0.8, e.radius * 2, e.radius * 1.6);
+        ctx.strokeRect(e.x - e.radius, e.y - e.radius * 0.8, e.radius * 2, e.radius * 1.6);
         ctx.beginPath();
         ctx.arc(e.x, e.y - e.radius * 0.5, e.radius * 0.7, 0, Math.PI * 2);
         ctx.fill();
+        ctx.stroke();
       } else { // wisp: 원 + 6방향 짧은 침
         ctx.beginPath();
         ctx.arc(e.x, e.y, e.radius, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = '#d9f2fb';
+        ctx.stroke();
+        ctx.strokeStyle = '#e8f8ff';
         ctx.beginPath();
         for (let k = 0; k < 6; k++) {
           const a = k * Math.PI / 3;
