@@ -79,28 +79,39 @@ class AltarManager {
   draw(ctx, player) {
     const R = CONFIG.altar.radius;
     for (const a of this.altarsInView(player.x, player.y)) {
-      const used = this.used.has(a.key);
-      ctx.fillStyle = used ? 'rgba(120, 130, 140, 0.35)' : 'rgba(210, 240, 255, 0.45)'; // 원 플랫폼
-      ctx.strokeStyle = used ? '#5a6570' : '#2e5a78';
+      if (this.used.has(a.key)) continue; // 사용된 제단은 잔재 없이 사라짐
+      ctx.fillStyle = 'rgba(210, 240, 255, 0.45)'; // 원 플랫폼
+      ctx.strokeStyle = '#2e5a78';
       ctx.lineWidth = 3;
       ctx.beginPath(); ctx.arc(a.x, a.y, R, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-      ctx.strokeStyle = used ? 'rgba(90, 101, 112, 0.6)' : 'rgba(46, 90, 120, 0.6)'; // 안쪽 동심원
+      ctx.strokeStyle = 'rgba(46, 90, 120, 0.6)'; // 안쪽 동심원
       ctx.lineWidth = 1.5;
       ctx.beginPath(); ctx.arc(a.x, a.y, R * 0.6, 0, Math.PI * 2); ctx.stroke();
-      if (!used) { // 중앙 크리스탈 (마름모) + 은은한 빛
-        ctx.fillStyle = 'rgba(255, 233, 160, 0.25)';
-        ctx.beginPath(); ctx.arc(a.x, a.y, 18, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = '#ffe9a0';
+      { // 중앙 U자 자석 (빨강 몸통 + 파랑 극) + 은은한 빛
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.beginPath(); ctx.arc(a.x, a.y + 2, 19, 0, Math.PI * 2); ctx.fill();
+        ctx.lineCap = 'butt';
+        ctx.strokeStyle = '#e04040';
+        ctx.lineWidth = 7;
         ctx.beginPath();
-        ctx.moveTo(a.x, a.y - 12); ctx.lineTo(a.x + 8, a.y); ctx.lineTo(a.x, a.y + 12); ctx.lineTo(a.x - 8, a.y);
-        ctx.closePath(); ctx.fill();
-      }
-      if (this.active === a && this.progress > 0) { // 3초 진행 호
-        ctx.strokeStyle = '#ffe9a0';
-        ctx.lineWidth = 4;
-        ctx.beginPath();
-        ctx.arc(a.x, a.y, R + 5, -Math.PI / 2, -Math.PI / 2 + (this.progress / CONFIG.altar.holdTime) * Math.PI * 2);
+        ctx.moveTo(a.x - 10, a.y + 10);
+        ctx.lineTo(a.x - 10, a.y - 2);
+        ctx.arc(a.x, a.y - 2, 10, Math.PI, 0); // 상단 반원
+        ctx.lineTo(a.x + 10, a.y + 10);
         ctx.stroke();
+        ctx.strokeStyle = '#3a6cd8'; // 파란 극 팁 2개
+        ctx.beginPath(); ctx.moveTo(a.x - 10, a.y + 4); ctx.lineTo(a.x - 10, a.y + 10); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(a.x + 10, a.y + 4); ctx.lineTo(a.x + 10, a.y + 10); ctx.stroke();
+      }
+      if (this.active === a && this.progress > 0) { // 제단 위 가로 프로그레스바 (좌→우)
+        const bw = R * 1.4, bh = 8, bx = a.x - bw / 2, by = a.y - R - 20;
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+        ctx.fillRect(bx, by, bw, bh);
+        ctx.fillStyle = '#ffe9a0';
+        ctx.fillRect(bx, by, bw * Math.min(1, this.progress / CONFIG.altar.holdTime), bh);
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(bx, by, bw, bh);
       }
     }
   }
