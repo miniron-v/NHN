@@ -1,12 +1,15 @@
+
 # Glacier Survivors 🐧❄️
+
+[![Video Label](http://img.youtube.com/vi/w937JUlWtQs/0.jpg)](https://youtu.be/w937JUlWtQs)
 
 미끄러운 빙판 위에서 몰려드는 적들을 피해 살아남는 웹 생존 액션 게임입니다.
 
 ### ▶ [지금 플레이하기](https://miniron-v.github.io/NHN/)
 
-브라우저에서 바로 실행됩니다. 설치 불필요. (데스크톱 + 키보드 권장)
+<img width="1279" height="799" alt="스크린샷 2026-08-10 233055" src="https://github.com/user-attachments/assets/8f87ccc3-7536-4073-8cb0-32e7d01e15b1" />
 
-![게임 화면](./스크린샷%202026-08-10%20233055.png)
+브라우저에서 바로 실행됩니다. 설치 불필요. (데스크톱 + 키보드 권장)
 
 ## 어떤 게임인가요?
 
