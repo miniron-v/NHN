@@ -101,10 +101,10 @@ class WeaponManager {
     const names = { icicle: '고드름', frostRing: '서리 고리', orbital: '회전 눈덩이' };
     const pool = [];
     for (const k of Object.keys(this.levels)) {
-      if (this.levels[k] === 0) pool.push({ name: names[k], desc: '새 무기 획득', apply: () => { this.levels[k] = 1; } });
-      else pool.push({ name: names[k], desc: `레벨 ${this.levels[k] + 1}로 강화`, apply: () => { this.levels[k]++; } });
+      if (this.levels[k] === 0) pool.push({ id: k, name: names[k], desc: '새 무기 획득', apply: () => { this.levels[k] = 1; } });
+      else pool.push({ id: k, name: names[k], desc: `레벨 ${this.levels[k] + 1}로 강화`, apply: () => { this.levels[k]++; } });
     }
-    pool.push({ name: '응급 처치', desc: '체력 +20 회복', apply: () => { const p = this.player; p.hp = Math.min(p.maxHp, p.hp + 20); } });
+    pool.push({ id: 'heal', name: '응급 처치', desc: '체력 +20 회복', apply: () => { const p = this.player; p.hp = Math.min(p.maxHp, p.hp + 20); } });
     for (let i = pool.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [pool[i], pool[j]] = [pool[j], pool[i]];

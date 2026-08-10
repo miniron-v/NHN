@@ -17,9 +17,12 @@
 //     .reset()
 //   ui.js      -> const UI = {
 //     drawHUD(ctx, player, elapsed, canvas),
-//     drawLevelUp(ctx, choices, canvas),      // 1/2/3 키로 선택
+//     drawLevelUp(ctx, choices, canvas),      // 세로 카드 가로 나열, 1/2/3 키 또는 클릭
+//     levelUpCardRects(choices, canvas) -> [{x, y, w, h}],  // 클릭 히트테스트용 (main이 사용)
 //     drawGameOver(ctx, elapsed, player, canvas),  // R 키로 재시작
 //   }
+//   choices의 각 항목: {id, name, desc, apply} - id는 아이콘 식별자
+//   (icicle | frostRing | orbital | heal)
 
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
@@ -45,21 +48,29 @@ function init() {
   state = 'playing';
 }
 
+function chooseUpgrade(i) {
+  if (!levelUpChoices || !levelUpChoices[i]) return;
+  levelUpChoices[i].apply();
+  player.pendingLevels--;
+  levelUpChoices = player.pendingLevels > 0 ? weaponMgr.getUpgradeChoices() : null;
+  if (!levelUpChoices) state = 'playing';
+}
+
 addEventListener('keydown', (e) => {
   keys[e.code] = true;
-  if (state === 'levelup' && levelUpChoices) {
-    const i = ['Digit1', 'Digit2', 'Digit3'].indexOf(e.code);
-    if (i >= 0 && levelUpChoices[i]) {
-      levelUpChoices[i].apply();
-      player.pendingLevels--;
-      levelUpChoices = player.pendingLevels > 0 ? weaponMgr.getUpgradeChoices() : null;
-      if (!levelUpChoices) state = 'playing';
-    }
+  if (state === 'levelup') {
+    chooseUpgrade(['Digit1', 'Digit2', 'Digit3'].indexOf(e.code));
   } else if (state === 'gameover' && e.code === 'KeyR') {
     init();
   }
 });
 addEventListener('keyup', (e) => { keys[e.code] = false; });
+canvas.addEventListener('click', (e) => {
+  if (state !== 'levelup' || !levelUpChoices) return;
+  const i = UI.levelUpCardRects(levelUpChoices, canvas)
+    .findIndex((r) => e.clientX >= r.x && e.clientX <= r.x + r.w && e.clientY >= r.y && e.clientY <= r.y + r.h);
+  if (i >= 0) chooseUpgrade(i);
+});
 
 function update(dt) {
   elapsed += dt;
