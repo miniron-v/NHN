@@ -23,7 +23,7 @@ class EnemyManager {
     const C = CONFIG.enemies;
     const name = this.pickType(elapsed);
     const t = C.types[name];
-    const dist = Math.hypot(innerWidth, innerHeight) / 2 + C.spawnDist;
+    const dist = Math.hypot(innerWidth, innerHeight) / 2 / CONFIG.camera.zoom + C.spawnDist;
     const a = Math.random() * Math.PI * 2;
     this.enemies.push({
       x: player.x + Math.cos(a) * dist,

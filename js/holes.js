@@ -28,7 +28,7 @@ class HoleManager {
 
   // 플레이어 주변 화면+여유 범위의 구멍 목록 (매 프레임 재계산해도 청크 수 적음)
   holesInView(px, py) {
-    const rw = innerWidth / 2 + 100, rh = innerHeight / 2 + 100;
+    const rw = innerWidth / 2 / CONFIG.camera.zoom + 100, rh = innerHeight / 2 / CONFIG.camera.zoom + 100;
     const c0x = Math.floor((px - rw) / this.chunk), c1x = Math.floor((px + rw) / this.chunk);
     const c0y = Math.floor((py - rh) / this.chunk), c1y = Math.floor((py + rh) / this.chunk);
     const holes = [];
@@ -61,9 +61,6 @@ class HoleManager {
       ctx.fill();
       ctx.fillStyle = '#0a1d30'; // 2. 짙은 물 (아래로 내려 위쪽 벽 띠 노출, 0.15+0.85=림 안쪽 정확히)
       this.ellipse(ctx, h.x, h.y + h.ry * 0.15, h.rx * 0.85, h.ry * 0.85);
-      ctx.fill();
-      ctx.fillStyle = 'rgba(140, 190, 220, 0.35)'; // 물 반사
-      this.ellipse(ctx, h.x, h.y - h.ry * 0.1, h.rx * 0.55, h.ry * 0.16);
       ctx.fill();
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)'; // 3. 밝은 얼음 림
       ctx.lineWidth = 2;

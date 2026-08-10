@@ -89,29 +89,32 @@ function update(dt) {
   }
 }
 
-// 설원 바닥: 은은한 격자 + 반점으로 이동감 제공
+// 설원 바닥: 월드 좌표계 격자 (카메라 변환 안에서 호출)
 function drawBackground() {
+  const vw = canvas.width / CONFIG.camera.zoom, vh = canvas.height / CONFIG.camera.zoom;
+  const x0 = player.x - vw / 2, y0 = player.y - vh / 2;
   ctx.fillStyle = '#dceef5';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillRect(x0, y0, vw, vh);
   const grid = 90;
-  const ox = -player.x % grid, oy = -player.y % grid;
   ctx.strokeStyle = 'rgba(160, 200, 220, 0.35)';
   ctx.lineWidth = 1;
   ctx.beginPath();
-  for (let x = ox; x < canvas.width + grid; x += grid) {
-    ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height);
+  for (let x = Math.floor(x0 / grid) * grid; x < x0 + vw + grid; x += grid) {
+    ctx.moveTo(x, y0); ctx.lineTo(x, y0 + vh);
   }
-  for (let y = oy; y < canvas.height + grid; y += grid) {
-    ctx.moveTo(0, y); ctx.lineTo(canvas.width, y);
+  for (let y = Math.floor(y0 / grid) * grid; y < y0 + vh + grid; y += grid) {
+    ctx.moveTo(x0, y); ctx.lineTo(x0 + vw, y);
   }
   ctx.stroke();
 }
 
 function draw() {
-  drawBackground();
   ctx.save();
-  // 카메라: 플레이어를 화면 중앙에 고정
-  ctx.translate(canvas.width / 2 - player.x, canvas.height / 2 - player.y);
+  // 카메라: 줌아웃 + 플레이어 화면 중앙 고정
+  ctx.translate(canvas.width / 2, canvas.height / 2);
+  ctx.scale(CONFIG.camera.zoom, CONFIG.camera.zoom);
+  ctx.translate(-player.x, -player.y);
+  drawBackground();
   holeMgr.draw(ctx, player);
   weaponMgr.draw(ctx);
   enemyMgr.draw(ctx);
