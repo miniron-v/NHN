@@ -18,18 +18,8 @@ class Player {
     let dx = (keys['KeyD'] || keys['ArrowRight'] ? 1 : 0) - (keys['KeyA'] || keys['ArrowLeft'] ? 1 : 0);
     let dy = (keys['KeyS'] || keys['ArrowDown'] ? 1 : 0) - (keys['KeyW'] || keys['ArrowUp'] ? 1 : 0);
     if (dx && dy) { dx *= Math.SQRT1_2; dy *= Math.SQRT1_2; }
-    // 빙판 그립: 진행 방향 성분은 온전히, 횡 성분은 turnGrip 배율만 먹혀 방향 전환이 어렵다
-    let ax = dx * CONFIG.player.accel * dt, ay = dy * CONFIG.player.accel * dt;
-    const sp0 = Math.hypot(this.vx, this.vy);
-    if (sp0 > 30 && (ax || ay)) {
-      const ux = this.vx / sp0, uy = this.vy / sp0;
-      const along = ax * ux + ay * uy;
-      const g = CONFIG.player.turnGrip;
-      ax = along * ux + (ax - along * ux) * g;
-      ay = along * uy + (ay - along * uy) * g;
-    }
-    this.vx += ax;
-    this.vy += ay;
+    this.vx += dx * CONFIG.player.accel * dt;
+    this.vy += dy * CONFIG.player.accel * dt;
 
     // 프레임레이트 독립 지수 감쇠 마찰
     const f = Math.pow(CONFIG.player.friction, dt);
