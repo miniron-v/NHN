@@ -34,7 +34,12 @@ function init() {
   player = new Player(0, 0);
   enemyMgr = new EnemyManager();
   weaponMgr = new WeaponManager();
-  enemyMgr.onDeath = (x, y, xp) => weaponMgr.spawnGem(x, y, xp);
+  enemyMgr.onDeath = (x, y, xp) => {
+    for (let i = 0; i < CONFIG.gem.dropCount; i++) {
+      const s = CONFIG.gem.scatter;
+      weaponMgr.spawnGem(x + (Math.random() - 0.5) * s, y + (Math.random() - 0.5) * s, xp);
+    }
+  };
   elapsed = 0;
   levelUpChoices = null;
   state = 'playing';
