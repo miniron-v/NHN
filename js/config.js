@@ -7,8 +7,8 @@ const CONFIG = {
     maxSpeed: 470,     // 속도 상한 (px/s)
     maxHp: 100,
     pickupRange: 70,   // XP 젬 흡수 반경
-    xpBase: 10,        // 레벨업 필요 XP = xpBase + xpGrowth * (level - 1)
-    xpGrowth: 8,
+    xpBase: 5,         // 레벨업 필요 XP = xpBase + xpGrowth * (level - 1)
+    xpGrowth: 4,
     invulnTime: 0.5,   // 피격 후 무적 시간(초)
   },
   enemies: {

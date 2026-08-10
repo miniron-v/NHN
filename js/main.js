@@ -62,7 +62,7 @@ function chooseUpgrade(i) {
 
 addEventListener('keydown', (e) => {
   keys[e.code] = true;
-  if (e.code === 'KeyP' || e.code === 'Escape') {
+  if (e.code === 'Escape') {
     if (state === 'playing') state = 'paused';
     else if (state === 'paused') state = 'playing';
   }
@@ -73,6 +73,7 @@ addEventListener('keydown', (e) => {
   }
 });
 addEventListener('keyup', (e) => { keys[e.code] = false; });
+addEventListener('contextmenu', (e) => e.preventDefault()); // 우클릭 메뉴 차단 (입력 꼬임 방지)
 canvas.addEventListener('click', (e) => {
   if (state !== 'levelup' || !levelUpChoices) return;
   const i = UI.levelUpCardRects(levelUpChoices, canvas)

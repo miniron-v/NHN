@@ -226,7 +226,7 @@ const UI = {
     ctx.fillText('일시정지', canvas.width / 2, canvas.height / 2 - 10);
     ctx.fillStyle = '#9fd8ef';
     ctx.font = '17px sans-serif';
-    ctx.fillText('P 또는 ESC로 재개', canvas.width / 2, canvas.height / 2 + 28);
+    ctx.fillText('ESC로 재개', canvas.width / 2, canvas.height / 2 + 28);
   },
 
   drawGameOver(ctx, elapsed, player, canvas) {
