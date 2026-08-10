@@ -33,6 +33,18 @@ const CONFIG = {
     frostRing: { damage: 6, tick: 0.5, range: 80 },
     // 회전 눈덩이: 플레이어 주위 공전
     orbital: { damage: 12, radius: 9, dist: 70, rotSpeed: 2.5, count: 1 },
+    // 눈보라: 주변 랜덤 지점에 폭풍 AoE 다발
+    blizzard: { damage: 15, cooldown: 2.4, bursts: 2, radius: 85, spawnRange: 320, life: 0.5 },
+    // 냉기 사슬: 적에서 적으로 튀는 서리 번개
+    chain: { damage: 14, cooldown: 1.3, chains: 3, range: 280, jump: 190 },
+    // 파편 노바: 전방위 파편 방사
+    nova: { damage: 8, cooldown: 1.7, shards: 8, speed: 400, radius: 4 },
+    // 빙결 궤적: 고속 이동 시 지나간 자리에 데미지 얼음길
+    trail: { damage: 5, tick: 0.35, patchR: 26, life: 2.2, minSpeed: 180, dropGap: 30 },
+    // 우박: 그림자 예고 후 낙하 충격 AoE
+    hail: { damage: 22, cooldown: 2.2, stones: 2, radius: 70, delay: 0.6, spawnRange: 380 },
+    // 유도 눈송이: 적을 쫓는 유도탄
+    flakes: { damage: 9, cooldown: 1.5, count: 2, speed: 250, turnRate: 4, radius: 7, life: 4 },
   },
   gem: { radius: 5, magnetSpeed: 380, dropCount: 2, scatter: 48 },
   camera: { zoom: 1.2 }, // 1.2배 확대(줌인)

@@ -1,31 +1,139 @@
-// Glacier Survivors - 무기 / XP 젬 관리
+// Glacier Survivors - 무기 레지스트리 / XP 젬 관리
+//
+// 무기 추가 계약: registerWeapon({...})으로 등록하면 매니저가 자동 구동한다.
+//   { id, name,
+//     descUp(l),                                  // 레벨업 카드 설명 (l = 현재 레벨)
+//     stats(l) -> s,                              // 레벨 반영 스탯
+//     update(mgr, dt, player, enemies, s, st),    // st = 무기별 상태 객체 (쿨다운/투사체 등 자유 사용)
+//     draw(mgr, ctx, s, st) }                     // 월드 좌표계 (선택)
+// 적 타격은 반드시 mgr.hitEnemy(e, dmg) 사용 (플래시+데미지 팝업 일원화).
+const WEAPONS = {};
+function registerWeapon(def) { WEAPONS[def.id] = def; }
+
+registerWeapon({
+  id: 'icicle', name: '고드름',
+  descUp: (l) => `고드름 +1개 (총 ${l + 1}개)`,
+  stats(l) {
+    const c = CONFIG.weapons.icicle;
+    return { damage: c.damage + 2 * (l - 1), pierce: c.pierce + Math.floor(l / 3), count: l, speed: c.speed, cooldown: c.cooldown, radius: c.radius };
+  },
+  update(mgr, dt, player, enemies, s, st) {
+    st.cd = (st.cd || 0) - dt;
+    st.projs = st.projs || [];
+    if (st.cd <= 0 && enemies.length) {
+      const best = mgr.nearest(player.x, player.y, enemies);
+      const base = Math.atan2(best.y - player.y, best.x - player.x);
+      for (let i = 0; i < s.count; i++) {
+        const a = base + (i - (s.count - 1) / 2) * 0.14; // 부채꼴 확산
+        st.projs.push({ x: player.x, y: player.y, vx: Math.cos(a) * s.speed, vy: Math.sin(a) * s.speed, pierce: s.pierce, hit: new Set() });
+      }
+      st.cd = s.cooldown;
+    }
+    for (const p of st.projs) {
+      p.x += p.vx * dt; p.y += p.vy * dt;
+      for (const e of enemies) {
+        if (p.pierce <= 0) break;
+        if (p.hit.has(e)) continue;
+        const dx = e.x - p.x, dy = e.y - p.y, r = e.radius + s.radius;
+        if (dx * dx + dy * dy < r * r) { mgr.hitEnemy(e, s.damage); p.hit.add(e); p.pierce--; }
+      }
+    }
+    st.projs = st.projs.filter((p) => p.pierce > 0 && Math.hypot(p.x - player.x, p.y - player.y) < 1400);
+  },
+  draw(mgr, ctx, s, st) {
+    ctx.fillStyle = '#aee2ff';
+    for (const p of st.projs || []) {
+      const a = Math.atan2(p.vy, p.vx);
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(a);
+      ctx.beginPath();
+      ctx.moveTo(s.radius * 2.2, 0);
+      ctx.lineTo(-s.radius, -s.radius);
+      ctx.lineTo(-s.radius, s.radius);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+  },
+});
+
+registerWeapon({
+  id: 'frostRing', name: '서리 고리',
+  descUp: () => '범위 +50',
+  stats(l) {
+    const c = CONFIG.weapons.frostRing;
+    return { damage: c.damage + 3 * (l - 1), range: c.range + 50 * (l - 1), tick: c.tick };
+  },
+  update(mgr, dt, player, enemies, s, st) {
+    st.cd = (st.cd || 0) - dt;
+    if (st.cd <= 0) {
+      for (const e of enemies) {
+        if (Math.hypot(e.x - player.x, e.y - player.y) < s.range + e.radius) mgr.hitEnemy(e, s.damage);
+      }
+      st.cd = s.tick;
+    }
+  },
+  draw(mgr, ctx, s) {
+    ctx.strokeStyle = 'rgba(140, 200, 255, 0.5)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(mgr.player.x, mgr.player.y, s.range, 0, Math.PI * 2);
+    ctx.stroke();
+  },
+});
+
+registerWeapon({
+  id: 'orbital', name: '회전 눈덩이',
+  descUp: (l) => `눈덩이 +1개 (총 ${l + 1}개)`,
+  stats(l) {
+    const c = CONFIG.weapons.orbital;
+    return { damage: c.damage + 4 * Math.floor(l / 2), count: l, radius: c.radius, dist: c.dist, rotSpeed: c.rotSpeed };
+  },
+  update(mgr, dt, player, enemies, s, st) {
+    st.angle = (st.angle || 0) + s.rotSpeed * dt;
+    for (let i = 0; i < s.count; i++) {
+      const a = st.angle + (i * Math.PI * 2) / s.count;
+      const ox = player.x + Math.cos(a) * s.dist, oy = player.y + Math.sin(a) * s.dist;
+      for (const e of enemies) {
+        if (mgr.time - (e._orbHitT || -1) < 0.5) continue; // 히트 쿨다운
+        const dx = e.x - ox, dy = e.y - oy, r = e.radius + s.radius;
+        if (dx * dx + dy * dy < r * r) { mgr.hitEnemy(e, s.damage); e._orbHitT = mgr.time; }
+      }
+    }
+  },
+  draw(mgr, ctx, s, st) {
+    ctx.fillStyle = '#ffffff';
+    for (let i = 0; i < s.count; i++) {
+      const a = (st.angle || 0) + (i * Math.PI * 2) / s.count;
+      ctx.beginPath();
+      ctx.arc(mgr.player.x + Math.cos(a) * s.dist, mgr.player.y + Math.sin(a) * s.dist, s.radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  },
+});
+
 class WeaponManager {
   constructor() { this.reset(); }
 
   reset() {
-    this.levels = { icicle: 1, frostRing: 0, orbital: 0 };
-    this.projectiles = [];
+    this.levels = { icicle: 1 }; // 시작 무기
+    this.state = {};             // 무기별 상태 (id -> {})
     this.gems = [];
     this.popups = [];
-    this.icicleCd = 0;
-    this.frostCd = 0;
-    this.orbitAngle = 0;
     this.time = 0;
     this.player = null;
   }
 
-  // 레벨 반영 스탯
-  icicleStats() {
-    const c = CONFIG.weapons.icicle, l = this.levels.icicle;
-    return { damage: c.damage + 2 * (l - 1), pierce: c.pierce + Math.floor(l / 3), count: l, speed: c.speed, cooldown: c.cooldown, radius: c.radius };
-  }
-  frostStats() {
-    const c = CONFIG.weapons.frostRing, l = this.levels.frostRing;
-    return { damage: c.damage + 3 * (l - 1), range: c.range + 50 * (l - 1), tick: c.tick };
-  }
-  orbitalStats() {
-    const c = CONFIG.weapons.orbital, l = this.levels.orbital;
-    return { damage: c.damage + 4 * Math.floor(l / 2), count: l, radius: c.radius, dist: c.dist, rotSpeed: c.rotSpeed };
+  st(id) { return this.state[id] || (this.state[id] = {}); }
+
+  nearest(x, y, enemies) {
+    let best = null, bd = Infinity;
+    for (const e of enemies) {
+      const d = (e.x - x) ** 2 + (e.y - y) ** 2;
+      if (d < bd) { bd = d; best = e; }
+    }
+    return best;
   }
 
   // 피격 처리 공통: 데미지 + 플래시(enemies.js가 렌더링) + 데미지 팝업
@@ -41,59 +149,9 @@ class WeaponManager {
     this.player = player;
     this.time += dt;
 
-    // 고드름: 가장 가까운 적에게 발사
-    this.icicleCd -= dt;
-    if (this.icicleCd <= 0 && enemies.length > 0) {
-      const s = this.icicleStats();
-      let best = null, bestD = Infinity;
-      for (const e of enemies) {
-        const d = (e.x - player.x) ** 2 + (e.y - player.y) ** 2;
-        if (d < bestD) { bestD = d; best = e; }
-      }
-      const base = Math.atan2(best.y - player.y, best.x - player.x);
-      for (let i = 0; i < s.count; i++) {
-        const a = base + (i - (s.count - 1) / 2) * 0.14; // 부채꼴 확산
-        this.projectiles.push({ x: player.x, y: player.y, vx: Math.cos(a) * s.speed, vy: Math.sin(a) * s.speed, damage: s.damage, pierce: s.pierce, radius: s.radius, hit: new Set() });
-      }
-      this.icicleCd = s.cooldown;
-    }
-    for (const p of this.projectiles) {
-      p.x += p.vx * dt; p.y += p.vy * dt;
-      for (const e of enemies) {
-        if (p.pierce <= 0) break;
-        if (p.hit.has(e)) continue;
-        const dx = e.x - p.x, dy = e.y - p.y, r = e.radius + p.radius;
-        if (dx * dx + dy * dy < r * r) { this.hitEnemy(e, p.damage); p.hit.add(e); p.pierce--; }
-      }
-    }
-    this.projectiles = this.projectiles.filter((p) =>
-      p.pierce > 0 && Math.hypot(p.x - player.x, p.y - player.y) < 1200);
-
-    // 서리 고리: 범위 내 전체 틱 데미지
-    if (this.levels.frostRing > 0) {
-      this.frostCd -= dt;
-      if (this.frostCd <= 0) {
-        const s = this.frostStats();
-        for (const e of enemies) {
-          if (Math.hypot(e.x - player.x, e.y - player.y) < s.range + e.radius) this.hitEnemy(e, s.damage);
-        }
-        this.frostCd = s.tick;
-      }
-    }
-
-    // 회전 눈덩이: 공전 + 히트 쿨다운 0.5초
-    if (this.levels.orbital > 0) {
-      const s = this.orbitalStats();
-      this.orbitAngle += s.rotSpeed * dt;
-      for (let i = 0; i < s.count; i++) {
-        const a = this.orbitAngle + (i * Math.PI * 2) / s.count;
-        const ox = player.x + Math.cos(a) * s.dist, oy = player.y + Math.sin(a) * s.dist;
-        for (const e of enemies) {
-          if (this.time - (e._orbHitT || -1) < 0.5) continue;
-          const dx = e.x - ox, dy = e.y - oy, r = e.radius + s.radius;
-          if (dx * dx + dy * dy < r * r) { this.hitEnemy(e, s.damage); e._orbHitT = this.time; }
-        }
-      }
+    for (const id in this.levels) {
+      const def = WEAPONS[id];
+      def.update(this, dt, player, enemies, def.stats(this.levels[id]), this.st(id));
     }
 
     // 젬: 흡수 범위 내면 자석 이동, 닿으면 획득
@@ -116,16 +174,11 @@ class WeaponManager {
   }
 
   getUpgradeChoices() {
-    const names = { icicle: '고드름', frostRing: '서리 고리', orbital: '회전 눈덩이' };
-    const descs = {
-      icicle: (l) => `고드름 +1개 (총 ${l + 1}개)`,
-      frostRing: () => '범위 +50',
-      orbital: (l) => `눈덩이 +1개 (총 ${l + 1}개)`,
-    };
     const pool = [];
-    for (const k of Object.keys(this.levels)) {
-      if (this.levels[k] === 0) pool.push({ id: k, name: names[k], desc: '새 무기 획득', apply: () => { this.levels[k] = 1; } });
-      else pool.push({ id: k, name: names[k], desc: descs[k](this.levels[k]), apply: () => { this.levels[k]++; } });
+    for (const id in WEAPONS) {
+      const l = this.levels[id] || 0;
+      if (l === 0) pool.push({ id, name: WEAPONS[id].name, desc: '새 무기 획득', apply: () => { this.levels[id] = 1; } });
+      else pool.push({ id, name: WEAPONS[id].name, desc: WEAPONS[id].descUp(l), apply: () => { this.levels[id]++; } });
     }
     pool.push({ id: 'heal', name: '응급 처치', desc: '체력 +20 회복', apply: () => { const p = this.player; p.hp = Math.min(p.maxHp, p.hp + 20); } });
     for (let i = pool.length - 1; i > 0; i--) {
@@ -136,38 +189,10 @@ class WeaponManager {
   }
 
   draw(ctx) {
-    const p = this.player;
-    if (!p) return;
-    if (this.levels.frostRing > 0) {
-      ctx.strokeStyle = 'rgba(140, 200, 255, 0.5)';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, this.frostStats().range, 0, Math.PI * 2);
-      ctx.stroke();
-    }
-    ctx.fillStyle = '#aee2ff';
-    for (const pr of this.projectiles) {
-      const a = Math.atan2(pr.vy, pr.vx);
-      ctx.save();
-      ctx.translate(pr.x, pr.y);
-      ctx.rotate(a);
-      ctx.beginPath();
-      ctx.moveTo(pr.radius * 2.2, 0);
-      ctx.lineTo(-pr.radius, -pr.radius);
-      ctx.lineTo(-pr.radius, pr.radius);
-      ctx.closePath();
-      ctx.fill();
-      ctx.restore();
-    }
-    if (this.levels.orbital > 0) {
-      const s = this.orbitalStats();
-      ctx.fillStyle = '#ffffff';
-      for (let i = 0; i < s.count; i++) {
-        const a = this.orbitAngle + (i * Math.PI * 2) / s.count;
-        ctx.beginPath();
-        ctx.arc(p.x + Math.cos(a) * s.dist, p.y + Math.sin(a) * s.dist, s.radius, 0, Math.PI * 2);
-        ctx.fill();
-      }
+    if (!this.player) return;
+    for (const id in this.levels) {
+      const def = WEAPONS[id];
+      if (def.draw) def.draw(this, ctx, def.stats(this.levels[id]), this.st(id));
     }
     ctx.fillStyle = '#5bc8f5';
     for (const g of this.gems) {

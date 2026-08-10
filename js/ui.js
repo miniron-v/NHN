@@ -71,6 +71,94 @@ const UI = {
       ctx.fillStyle = '#fff';
       ctx.fillRect(cx - size * 0.07, cy - size * 0.45, size * 0.14, size * 0.9);
       ctx.fillRect(cx - size * 0.45, cy - size * 0.07, size * 0.9, size * 0.14);
+    } else if (id === 'blizzard') {
+      ctx.strokeStyle = '#8cd0ff';
+      for (let i = 0; i < 3; i++) {
+        const a = (i / 3) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.arc(cx + Math.cos(a) * size * 0.25, cy + Math.sin(a) * size * 0.25, size * 0.4, a, a + Math.PI * 0.9);
+        ctx.stroke();
+      }
+    } else if (id === 'chain') {
+      ctx.strokeStyle = '#7fe8ff';
+      ctx.fillStyle = '#7fe8ff';
+      ctx.beginPath();
+      ctx.moveTo(cx - size * 0.55, cy - size * 0.35);
+      ctx.lineTo(cx - size * 0.15, cy + size * 0.15);
+      ctx.lineTo(cx + size * 0.15, cy - size * 0.15);
+      ctx.lineTo(cx + size * 0.55, cy + size * 0.35);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(cx - size * 0.55, cy - size * 0.35, size * 0.14, 0, Math.PI * 2);
+      ctx.arc(cx + size * 0.55, cy + size * 0.35, size * 0.14, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (id === 'nova') {
+      ctx.strokeStyle = '#a8d8ff';
+      ctx.fillStyle = '#a8d8ff';
+      ctx.beginPath();
+      ctx.arc(cx, cy, size * 0.22, 0, Math.PI * 2);
+      ctx.fill();
+      for (let i = 0; i < 8; i++) {
+        const a = (i / 8) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(a) * size * 0.32, cy + Math.sin(a) * size * 0.32);
+        ctx.lineTo(cx + Math.cos(a) * size * 0.65, cy + Math.sin(a) * size * 0.65);
+        ctx.stroke();
+      }
+    } else if (id === 'trail') {
+      ctx.strokeStyle = '#8cd0ff';
+      ctx.beginPath();
+      ctx.moveTo(cx - size * 0.6, cy + size * 0.4);
+      ctx.bezierCurveTo(cx - size * 0.1, cy + size * 0.7, cx + size * 0.1, cy - size * 0.7, cx + size * 0.6, cy - size * 0.4);
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(140, 208, 255, 0.5)';
+      [[-0.45, 0.42], [0, 0], [0.45, -0.42]].forEach(([dx, dy]) => {
+        ctx.beginPath();
+        ctx.arc(cx + dx * size, cy + dy * size, size * 0.16, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    } else if (id === 'hail') {
+      ctx.fillStyle = 'rgba(140, 170, 200, 0.4)';
+      ctx.beginPath();
+      ctx.ellipse(cx, cy + size * 0.55, size * 0.5, size * 0.13, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#9ab8d0';
+      ctx.beginPath();
+      ctx.moveTo(cx - size * 0.3, cy - size * 0.05);
+      ctx.lineTo(cx - size * 0.3, cy + size * 0.3);
+      ctx.moveTo(cx + size * 0.25, cy + size * 0.05);
+      ctx.lineTo(cx + size * 0.25, cy + size * 0.35);
+      ctx.stroke();
+      ctx.fillStyle = '#8ca8c8';
+      ctx.beginPath();
+      ctx.arc(cx - size * 0.3, cy - size * 0.3, size * 0.22, 0, Math.PI * 2);
+      ctx.arc(cx + size * 0.25, cy - size * 0.15, size * 0.16, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (id === 'flakes') {
+      ctx.strokeStyle = '#cfeaff';
+      ctx.fillStyle = '#cfeaff';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, size * 0.12, 0, Math.PI * 2);
+      ctx.fill();
+      for (let i = 0; i < 6; i++) {
+        const a = (i / 6) * Math.PI * 2;
+        const ex = cx + Math.cos(a) * size * 0.6, ey = cy + Math.sin(a) * size * 0.6;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(ex, ey);
+        ctx.moveTo(ex, ey);
+        ctx.lineTo(ex + Math.cos(a + Math.PI * 0.75) * size * 0.18, ey + Math.sin(a + Math.PI * 0.75) * size * 0.18);
+        ctx.moveTo(ex, ey);
+        ctx.lineTo(ex + Math.cos(a - Math.PI * 0.75) * size * 0.18, ey + Math.sin(a - Math.PI * 0.75) * size * 0.18);
+        ctx.stroke();
+      }
+    } else {
+      // 알 수 없는 id 폴백: 기본 흰 원
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(cx, cy, size * 0.4, 0, Math.PI * 2);
+      ctx.fill();
     }
   },
 
