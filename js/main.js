@@ -62,6 +62,10 @@ function chooseUpgrade(i) {
 
 addEventListener('keydown', (e) => {
   keys[e.code] = true;
+  if (e.code === 'KeyP' || e.code === 'Escape') {
+    if (state === 'playing') state = 'paused';
+    else if (state === 'paused') state = 'playing';
+  }
   if (state === 'levelup') {
     chooseUpgrade(['Digit1', 'Digit2', 'Digit3'].indexOf(e.code));
   } else if (state === 'gameover' && e.code === 'KeyR') {
@@ -111,6 +115,7 @@ function draw() {
   ctx.restore();
   UI.drawHUD(ctx, player, elapsed, canvas);
   if (state === 'levelup') UI.drawLevelUp(ctx, levelUpChoices, canvas);
+  if (state === 'paused') UI.drawPause(ctx, canvas);
   if (state === 'gameover') UI.drawGameOver(ctx, elapsed, player, canvas);
 }
 

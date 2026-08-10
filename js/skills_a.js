@@ -52,7 +52,7 @@ registerWeapon({
   descUp: (l) => `연쇄 +1회 (총 ${CONFIG.weapons.chain.chains + l}회)`,
   stats(l) {
     const c = CONFIG.weapons.chain;
-    return { damage: c.damage + 3 * (l - 1), chains: c.chains + (l - 1), range: c.range, jump: c.jump, cooldown: c.cooldown, width: 2.5 + 0.7 * (l - 1) };
+    return { damage: c.damage + 3 * (l - 1), chains: c.chains + (l - 1), range: c.range, jump: c.jump, cooldown: c.cooldown, width: 2.5 + 5.5 * (l - 1) }; // 5레벨 ≈ 펭귄 굵기(24px)
   },
   update(mgr, dt, player, enemies, s, st) {
     st.cd = (st.cd || 0) - dt;

@@ -18,6 +18,9 @@ const CONFIG = {
       snowman:{ radius: 14, hp: 35,  speed: 60,  damage: 14, xp: 4,  color: '#e8f4f8' },
       golem: { radius: 20, hp: 110, speed: 40,  damage: 25, xp: 12, color: '#5b8ca8' },
     },
+    // 보스: 주기적으로 등장하는 거대 개체. xp는 스폰 시점 경과 시간 기준
+    // (xpBase + xpPerSec * elapsed) - 젬 2개 드롭 포함 약 3레벨 분량
+    boss: { radius: 55, hp: 1800, speed: 38, damage: 40, color: '#3d6e8e', interval: 90, xpBase: 100, xpPerSec: 0.65 },
     spawnInterval: 1.2,     // 기본 스폰 간격(초), 시간이 지나며 감소
     spawnIntervalMin: 0.25,
     spawnRampTime: 240,     // 이 시간(초)에 걸쳐 간격이 최소까지 감소
