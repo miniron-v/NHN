@@ -89,23 +89,11 @@ function update(dt) {
   }
 }
 
-// 설원 바닥: 월드 좌표계 격자 (카메라 변환 안에서 호출)
+// 설원 바닥 (카메라 변환 안에서 호출)
 function drawBackground() {
   const vw = canvas.width / CONFIG.camera.zoom, vh = canvas.height / CONFIG.camera.zoom;
-  const x0 = player.x - vw / 2, y0 = player.y - vh / 2;
   ctx.fillStyle = '#dceef5';
-  ctx.fillRect(x0, y0, vw, vh);
-  const grid = 90;
-  ctx.strokeStyle = 'rgba(160, 200, 220, 0.35)';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  for (let x = Math.floor(x0 / grid) * grid; x < x0 + vw + grid; x += grid) {
-    ctx.moveTo(x, y0); ctx.lineTo(x, y0 + vh);
-  }
-  for (let y = Math.floor(y0 / grid) * grid; y < y0 + vh + grid; y += grid) {
-    ctx.moveTo(x0, y); ctx.lineTo(x0 + vw, y);
-  }
-  ctx.stroke();
+  ctx.fillRect(player.x - vw / 2, player.y - vh / 2, vw, vh);
 }
 
 function draw() {

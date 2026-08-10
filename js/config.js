@@ -3,7 +3,8 @@ const CONFIG = {
   player: {
     radius: 13,
     accel: 850,        // 입력 시 가속도 (px/s^2) - 빙판이라 즉발이 아님
-    friction: 0.62,    // 초당 속도 잔존율 (낮을수록 잘 안 미끄러짐). 과한 미끄러짐이 컨셉
+    friction: 0.45,    // 초당 속도 잔존율. 손을 놓으면 무난히 감속
+    turnGrip: 0.35,    // 진행 방향과 다른(횡) 입력의 가속 효율. 낮을수록 방향 전환이 어려움
     maxSpeed: 400,     // 속도 상한 (px/s)
     maxHp: 100,
     pickupRange: 70,   // XP 젬 흡수 반경
@@ -34,6 +35,6 @@ const CONFIG = {
     orbital: { damage: 12, radius: 9, dist: 70, rotSpeed: 2.5, count: 1 },
   },
   gem: { radius: 5, magnetSpeed: 380, dropCount: 2, scatter: 48 },
-  camera: { zoom: 1 / 1.2 }, // 1.2배 넓게 보이는 줌아웃
+  camera: { zoom: 1.2 }, // 1.2배 확대(줌인)
 
 };
