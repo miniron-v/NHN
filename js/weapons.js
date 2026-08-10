@@ -15,7 +15,7 @@ registerWeapon({
   descUp: (l) => `고드름 +1개 (총 ${l + 1}개)`,
   stats(l) {
     const c = CONFIG.weapons.icicle;
-    return { damage: c.damage + 2 * (l - 1), pierce: c.pierce + Math.floor(l / 3), count: l, speed: c.speed, cooldown: c.cooldown, radius: c.radius };
+    return { damage: c.damage + 2 * (l - 1), pierce: c.pierce + Math.floor(l / 3), count: l, speed: c.speed, cooldown: c.cooldown, radius: c.radius + 0.4 * (l - 1) };
   },
   update(mgr, dt, player, enemies, s, st) {
     st.cd = (st.cd || 0) - dt;
@@ -41,7 +41,7 @@ registerWeapon({
     st.projs = st.projs.filter((p) => p.pierce > 0 && Math.hypot(p.x - player.x, p.y - player.y) < 1400);
   },
   draw(mgr, ctx, s, st) {
-    ctx.fillStyle = '#aee2ff';
+    ctx.fillStyle = '#4fb0e4';
     for (const p of st.projs || []) {
       const a = Math.atan2(p.vy, p.vx);
       ctx.save();
@@ -63,7 +63,7 @@ registerWeapon({
   descUp: () => '범위 +50',
   stats(l) {
     const c = CONFIG.weapons.frostRing;
-    return { damage: c.damage + 3 * (l - 1), range: c.range + 50 * (l - 1), tick: c.tick };
+    return { damage: c.damage + 3 * (l - 1), range: c.range + 50 * (l - 1), tick: c.tick, width: 3 + 0.8 * (l - 1) };
   },
   update(mgr, dt, player, enemies, s, st) {
     st.cd = (st.cd || 0) - dt;
@@ -75,8 +75,8 @@ registerWeapon({
     }
   },
   draw(mgr, ctx, s) {
-    ctx.strokeStyle = 'rgba(140, 200, 255, 0.5)';
-    ctx.lineWidth = 3;
+    ctx.strokeStyle = 'rgba(50, 135, 195, 0.7)';
+    ctx.lineWidth = s.width; // 레벨업할수록 굵어진다
     ctx.beginPath();
     ctx.arc(mgr.player.x, mgr.player.y, s.range, 0, Math.PI * 2);
     ctx.stroke();
@@ -88,7 +88,7 @@ registerWeapon({
   descUp: (l) => `눈덩이 +1개 (총 ${l + 1}개)`,
   stats(l) {
     const c = CONFIG.weapons.orbital;
-    return { damage: c.damage + 4 * Math.floor(l / 2), count: l, radius: c.radius, dist: c.dist, rotSpeed: c.rotSpeed };
+    return { damage: c.damage + 4 * Math.floor(l / 2), count: l, radius: c.radius + 0.7 * (l - 1), dist: c.dist, rotSpeed: c.rotSpeed };
   },
   update(mgr, dt, player, enemies, s, st) {
     st.angle = (st.angle || 0) + s.rotSpeed * dt;
@@ -104,11 +104,14 @@ registerWeapon({
   },
   draw(mgr, ctx, s, st) {
     ctx.fillStyle = '#ffffff';
+    ctx.strokeStyle = '#1e3a4a';
+    ctx.lineWidth = 2;
     for (let i = 0; i < s.count; i++) {
       const a = (st.angle || 0) + (i * Math.PI * 2) / s.count;
       ctx.beginPath();
       ctx.arc(mgr.player.x + Math.cos(a) * s.dist, mgr.player.y + Math.sin(a) * s.dist, s.radius, 0, Math.PI * 2);
       ctx.fill();
+      ctx.stroke();
     }
   },
 });
@@ -195,7 +198,7 @@ class WeaponManager {
       if (def.draw) def.draw(this, ctx, def.stats(this.levels[id]), this.st(id));
     }
     ctx.fillStyle = '#5bc8f5';
-    ctx.strokeStyle = '#ffffff';
+    ctx.strokeStyle = '#1e3a4a';
     ctx.lineWidth = 1.5;
     for (const g of this.gems) {
       const r = CONFIG.gem.radius;

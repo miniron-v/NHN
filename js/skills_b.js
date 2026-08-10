@@ -7,7 +7,7 @@ registerWeapon({
   descUp: () => '얼음길 강화 (범위/지속 증가)',
   stats(l) {
     const c = CONFIG.weapons.trail;
-    return { damage: c.damage + 2 * (l - 1), patchR: c.patchR + 6 * (l - 1), life: c.life + 0.3 * (l - 1), tick: c.tick, minSpeed: c.minSpeed, dropGap: c.dropGap };
+    return { damage: c.damage + 2 * (l - 1), patchR: c.patchR + 9 * (l - 1), life: c.life + 0.3 * (l - 1), tick: c.tick, minSpeed: c.minSpeed, dropGap: c.dropGap };
   },
   update(mgr, dt, player, enemies, s, st) {
     st.patches = st.patches || [];
@@ -32,8 +32,8 @@ registerWeapon({
     ctx.save();
     for (const p of st.patches || []) {
       const a = Math.max(0, p.t / s.life);
-      ctx.globalAlpha = 0.35 * a;
-      ctx.fillStyle = '#8fe0ff';
+      ctx.globalAlpha = 0.4 * a;
+      ctx.fillStyle = '#3fb4e4';
       ctx.beginPath();
       ctx.arc(p.x, p.y, s.patchR, 0, Math.PI * 2);
       ctx.fill();
@@ -53,7 +53,7 @@ registerWeapon({
   descUp: (l) => `우박 +1개 (총 ${CONFIG.weapons.hail.stones + l}개)`,
   stats(l) {
     const c = CONFIG.weapons.hail;
-    return { damage: c.damage + 5 * (l - 1), stones: c.stones + (l - 1), radius: c.radius, delay: c.delay, cooldown: c.cooldown, spawnRange: c.spawnRange };
+    return { damage: c.damage + 5 * (l - 1), stones: c.stones + (l - 1), radius: c.radius + 6 * (l - 1), delay: c.delay, cooldown: c.cooldown, spawnRange: c.spawnRange };
   },
   update(mgr, dt, player, enemies, s, st) {
     st.cd = (st.cd || 0) - dt;
@@ -121,7 +121,7 @@ registerWeapon({
   descUp: (l) => `눈송이 +1개 (총 ${CONFIG.weapons.flakes.count + l}개)`,
   stats(l) {
     const c = CONFIG.weapons.flakes;
-    return { damage: c.damage + 2 * (l - 1), count: c.count + (l - 1), speed: c.speed, turnRate: c.turnRate, radius: c.radius, life: c.life, cooldown: c.cooldown };
+    return { damage: c.damage + 2 * (l - 1), count: c.count + (l - 1), speed: c.speed, turnRate: c.turnRate, radius: c.radius + 0.6 * (l - 1), life: c.life, cooldown: c.cooldown };
   },
   update(mgr, dt, player, enemies, s, st) {
     st.cd = (st.cd || 0) - dt;
@@ -163,6 +163,11 @@ registerWeapon({
         ctx.moveTo(0, 0);
         ctx.lineTo(Math.cos(a) * s.radius, Math.sin(a) * s.radius);
       }
+      ctx.strokeStyle = '#2b586e'; // 어두운 밑선 + 흰 윗선으로 밝은 배경에서도 보이게
+      ctx.lineWidth = 3.5;
+      ctx.stroke();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1.5;
       ctx.stroke();
       ctx.fillStyle = '#ffffff';
       ctx.beginPath();

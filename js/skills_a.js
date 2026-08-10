@@ -6,7 +6,7 @@ registerWeapon({
   descUp: (l) => `폭풍 +1개 (총 ${CONFIG.weapons.blizzard.bursts + l}개)`,
   stats(l) {
     const c = CONFIG.weapons.blizzard;
-    return { damage: c.damage + 3 * (l - 1), bursts: c.bursts + (l - 1), radius: c.radius, spawnRange: c.spawnRange, life: c.life, cooldown: c.cooldown };
+    return { damage: c.damage + 3 * (l - 1), bursts: c.bursts + (l - 1), radius: c.radius + 8 * (l - 1), spawnRange: c.spawnRange, life: c.life, cooldown: c.cooldown };
   },
   update(mgr, dt, player, enemies, s, st) {
     st.cd = (st.cd || 0) - dt;
@@ -33,9 +33,9 @@ registerWeapon({
       const p = Math.min(1, b.t / s.life), r = s.radius * p;
       ctx.save();
       ctx.globalAlpha = 0.85 * (1 - p * 0.55);
-      ctx.fillStyle = 'rgba(150, 215, 255, 0.28)';
+      ctx.fillStyle = 'rgba(90, 175, 220, 0.3)';
       ctx.beginPath(); ctx.arc(b.x, b.y, r, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = '#bfe9ff';
+      ctx.strokeStyle = '#2f7fa8';
       ctx.lineWidth = 3;
       const rot = b.spin + b.dir * mgr.time * 7; // 소용돌이 호 3개 회전
       for (let i = 0; i < 3; i++) {
@@ -52,7 +52,7 @@ registerWeapon({
   descUp: (l) => `연쇄 +1회 (총 ${CONFIG.weapons.chain.chains + l}회)`,
   stats(l) {
     const c = CONFIG.weapons.chain;
-    return { damage: c.damage + 3 * (l - 1), chains: c.chains + (l - 1), range: c.range, jump: c.jump, cooldown: c.cooldown };
+    return { damage: c.damage + 3 * (l - 1), chains: c.chains + (l - 1), range: c.range, jump: c.jump, cooldown: c.cooldown, width: 2.5 + 0.7 * (l - 1) };
   },
   update(mgr, dt, player, enemies, s, st) {
     st.cd = (st.cd || 0) - dt;
@@ -87,8 +87,8 @@ registerWeapon({
   },
   draw(mgr, ctx, s, st) {
     ctx.save();
-    ctx.strokeStyle = '#7fe8ff';
-    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = '#1a9fd8';
+    ctx.lineWidth = s.width; // 레벨업할수록 굵어진다
     for (const b of st.bolts || []) {
       ctx.globalAlpha = Math.max(0, b.t / 0.25);
       ctx.beginPath();
@@ -130,6 +130,8 @@ registerWeapon({
   draw(mgr, ctx, s, st) {
     ctx.save();
     ctx.fillStyle = '#e6f7ff';
+    ctx.strokeStyle = '#2b586e';
+    ctx.lineWidth = 1;
     for (const p of st.shards || []) {
       const r = s.radius + 1.5;
       ctx.globalAlpha = 0.9 - (p.dist / 500) * 0.5;
@@ -138,7 +140,7 @@ registerWeapon({
       ctx.lineTo(p.x - (p.vy / s.speed) * r, p.y + (p.vx / s.speed) * r);
       ctx.lineTo(p.x - (p.vx / s.speed) * r * 1.8, p.y - (p.vy / s.speed) * r * 1.8);
       ctx.lineTo(p.x + (p.vy / s.speed) * r, p.y - (p.vx / s.speed) * r);
-      ctx.closePath(); ctx.fill();
+      ctx.closePath(); ctx.fill(); ctx.stroke();
     }
     ctx.restore();
   },

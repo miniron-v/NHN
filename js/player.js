@@ -60,7 +60,7 @@ class Player {
     // 미끄럼 자국: 속도 방향 반대로 짧은 선
     if (speed > 120) {
       const ux = this.vx / speed, uy = this.vy / speed;
-      ctx.strokeStyle = 'rgba(240, 252, 255, 0.65)';
+      ctx.strokeStyle = 'rgba(120, 170, 200, 0.6)';
       ctx.lineWidth = 2;
       ctx.beginPath();
       for (const side of [-1, 1]) {
