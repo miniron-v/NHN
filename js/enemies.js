@@ -100,30 +100,38 @@ class EnemyManager {
       ctx.lineWidth = 2;
       ctx.fillStyle = e.color;
       ctx.strokeStyle = '#1e3a4a'; // 어두운 외곽선으로 배경과 분리
-      if (e.type === 'boss') { // 거대 북극곰: 회백색 몸통 + 둥근 귀 + 주둥이 + 어두운 눈
+      if (e.type === 'boss') { // 거대 북극곰: 몸통 + 앞발 + 머리 + 귀 + 주둥이
+        const r = e.radius, hx = e.x, hy = e.y - r * 0.45; // 머리 중심
         ctx.lineWidth = 4;
         ctx.fillStyle = '#e8eef2';
-        ctx.beginPath(); // 귀 2개 먼저 (아랫부분이 몸통에 가려짐)
-        ctx.arc(e.x - e.radius * 0.6, e.y - e.radius * 0.8, e.radius * 0.28, 0, Math.PI * 2);
+        ctx.beginPath(); // 몸통(아래 큰 타원) 먼저
+        ctx.ellipse(e.x, e.y + r * 0.35, r * 0.95, r * 0.72, 0, 0, Math.PI * 2);
         ctx.fill(); ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(e.x + e.radius * 0.6, e.y - e.radius * 0.8, e.radius * 0.28, 0, Math.PI * 2);
-        ctx.fill(); ctx.stroke();
-        ctx.beginPath(); // 몸통이 귀 윤곽선을 덮음
-        ctx.arc(e.x, e.y, e.radius, 0, Math.PI * 2);
+        for (const side of [-1, 1]) { // 앞발 2개
+          ctx.beginPath();
+          ctx.arc(e.x + side * r * 0.6, e.y + r * 0.88, r * 0.22, 0, Math.PI * 2);
+          ctx.fill(); ctx.stroke();
+        }
+        for (const side of [-1, 1]) { // 귀 2개
+          ctx.beginPath();
+          ctx.arc(hx + side * r * 0.45, hy - r * 0.5, r * 0.2, 0, Math.PI * 2);
+          ctx.fill(); ctx.stroke();
+        }
+        ctx.beginPath(); // 머리(귀/몸통 윤곽선을 덮음)
+        ctx.arc(hx, hy, r * 0.62, 0, Math.PI * 2);
         ctx.fill(); ctx.stroke();
         ctx.lineWidth = 2;
-        ctx.fillStyle = '#f6fafc'; // 주둥이(밝은 타원)
+        ctx.fillStyle = '#f6fafc'; // 주둥이
         ctx.beginPath();
-        ctx.ellipse(e.x, e.y + e.radius * 0.35, e.radius * 0.42, e.radius * 0.3, 0, 0, Math.PI * 2);
+        ctx.ellipse(hx, hy + r * 0.22, r * 0.28, r * 0.19, 0, 0, Math.PI * 2);
         ctx.fill(); ctx.stroke();
-        ctx.fillStyle = '#1e3a4a'; // 검은 코 + 어두운 눈 2개
+        ctx.fillStyle = '#1e3a4a'; // 코 + 눈 2개
         ctx.beginPath();
-        ctx.ellipse(e.x, e.y + e.radius * 0.26, e.radius * 0.14, e.radius * 0.1, 0, 0, Math.PI * 2);
+        ctx.ellipse(hx, hy + r * 0.16, r * 0.1, r * 0.07, 0, 0, Math.PI * 2);
         ctx.fill();
         ctx.beginPath();
-        ctx.arc(e.x - e.radius * 0.3, e.y - e.radius * 0.12, e.radius * 0.09, 0, Math.PI * 2);
-        ctx.arc(e.x + e.radius * 0.3, e.y - e.radius * 0.12, e.radius * 0.09, 0, Math.PI * 2);
+        ctx.arc(hx - r * 0.22, hy - r * 0.08, r * 0.06, 0, Math.PI * 2);
+        ctx.arc(hx + r * 0.22, hy - r * 0.08, r * 0.06, 0, Math.PI * 2);
         ctx.fill();
       } else if (e.type === 'snowman') { // 하프 물범: 통통한 타원 몸통 + 둥근 머리 + 꼬리
         const hx = e.x + e.radius * 0.8, hy = e.y - e.radius * 0.2;

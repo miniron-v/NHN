@@ -58,5 +58,7 @@ const CONFIG = {
   },
   gem: { radius: 5, magnetSpeed: 380, dropCount: 2, scatter: 48 },
   camera: { zoom: 1.2 }, // 1.2배 확대(줌인)
+  altar: { radius: 46, holdTime: 3, chunk: 900, prob: 0.22 }, // 자석 제단
+
 
 };

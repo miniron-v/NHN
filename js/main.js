@@ -34,13 +34,14 @@ addEventListener('resize', resize);
 resize();
 
 const keys = {};
-let state, player, enemyMgr, weaponMgr, holeMgr, elapsed, levelUpChoices;
+let state, player, enemyMgr, weaponMgr, holeMgr, altarMgr, elapsed, levelUpChoices;
 
 function init() {
   player = new Player(0, 0);
   enemyMgr = new EnemyManager();
   weaponMgr = new WeaponManager();
   holeMgr = new HoleManager();
+  altarMgr = new AltarManager();
   enemyMgr.onDeath = (e) => {
     for (let i = 0; i < CONFIG.gem.dropCount; i++) {
       const s = CONFIG.gem.scatter;
@@ -89,6 +90,10 @@ function update(dt) {
   player.update(dt, keys);
   enemyMgr.update(dt, player, elapsed);
   weaponMgr.update(dt, player, enemyMgr.enemies);
+  if (altarMgr.update(dt, player)) { // 제단 발동: 필드 전체 젬 흡인
+    for (const g of weaponMgr.gems) g.magnet = true;
+    FX.shake(4);
+  }
   if (holeMgr.check(player)) { player.hp = 0; state = 'gameover'; } // 구멍 추락 즉사
   else if (player.hp <= 0) state = 'gameover';
   else if (player.pendingLevels > 0) {
@@ -113,6 +118,7 @@ function draw() {
   ctx.translate(-player.x, -player.y);
   drawBackground();
   holeMgr.draw(ctx, player);
+  altarMgr.draw(ctx, player);
   weaponMgr.draw(ctx);
   enemyMgr.draw(ctx);
   player.draw(ctx);
