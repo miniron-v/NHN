@@ -12,7 +12,7 @@ class EnemyManager {
   // 경과 시간에 따른 적 종류 선택 (가중치: 약한 쪽이 더 자주)
   pickType(elapsed) {
     let pool;
-    if (elapsed < 60) pool = [['wisp', 1]];
+    if (elapsed < 20) pool = [['wisp', 1]];
     else if (elapsed < 150) pool = [['wisp', 3], ['snowman', 2]];
     else pool = [['wisp', 5], ['snowman', 3], ['golem', 2]];
     let r = Math.random() * pool.reduce((s, p) => s + p[1], 0);
