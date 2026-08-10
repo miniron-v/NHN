@@ -6,24 +6,30 @@ const UI = {
   },
 
   drawHUD(ctx, player, elapsed, canvas) {
-    // HP 바
+    const w = canvas.width;
+    // HP 바: 상단 전체 너비
     ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
-    ctx.fillRect(20, 20, 220, 16);
+    ctx.fillRect(0, 0, w, 14);
     ctx.fillStyle = '#e05050';
-    ctx.fillRect(20, 20, 220 * Math.max(0, player.hp / player.maxHp), 16);
-    // XP 바 + 레벨
+    ctx.fillRect(0, 0, w * Math.max(0, player.hp / player.maxHp), 14);
+    // XP 바: 그 아래 전체 너비
     ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
-    ctx.fillRect(20, 42, 220, 10);
+    ctx.fillRect(0, 16, w, 10);
     ctx.fillStyle = '#5bc8f5';
-    ctx.fillRect(20, 42, 220 * Math.min(1, player.xp / player.xpNeeded), 10);
-    ctx.fillStyle = '#234';
-    ctx.font = '14px sans-serif';
+    ctx.fillRect(0, 16, w * Math.min(1, player.xp / player.xpNeeded), 10);
+    // 레벨: XP 바 좌측
+    ctx.font = 'bold 12px sans-serif';
     ctx.textAlign = 'left';
-    ctx.fillText(`Lv ${player.level}`, 248, 52);
-    // 생존 시간
+    ctx.strokeStyle = 'rgba(20, 40, 55, 0.9)';
+    ctx.lineWidth = 3;
+    ctx.strokeText(`Lv ${player.level}`, 6, 26);
+    ctx.fillStyle = '#fff';
+    ctx.fillText(`Lv ${player.level}`, 6, 26);
+    // 생존 시간 (바 아래)
+    ctx.fillStyle = '#234';
     ctx.textAlign = 'center';
     ctx.font = 'bold 22px sans-serif';
-    ctx.fillText(UI.fmtTime(elapsed), canvas.width / 2, 34);
+    ctx.fillText(UI.fmtTime(elapsed), w / 2, 50);
   },
 
   levelUpCardRects(choices, canvas) {

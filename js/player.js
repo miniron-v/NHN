@@ -57,18 +57,23 @@ class Player {
     const r = this.radius;
     const speed = Math.hypot(this.vx, this.vy);
 
-    // 미끄럼 자국: 속도 방향 반대로 짧은 선
+    // 미끄럼 자국: 뒤로 갈수록 얇아지는 곡선형 사다리꼴 하나
     if (speed > 120) {
       const ux = this.vx / speed, uy = this.vy / speed;
-      ctx.strokeStyle = 'rgba(120, 170, 200, 0.6)';
-      ctx.lineWidth = 2;
+      const px = -uy, py = ux; // 진행 방향의 수직
+      const bx = this.x - ux * r, by = this.y - uy * r;                 // 시작(펭귄 뒤)
+      const len = r + speed * 0.14;
+      const tx = bx - ux * len, ty = by - uy * len;                     // 끝(꼬리)
+      const mx = (bx + tx) / 2, my = (by + ty) / 2;
+      const w1 = r * 0.85, w2 = r * 0.22, wm = (w1 + w2) * 0.38;        // 중간을 좁혀 곡선형
+      ctx.fillStyle = 'rgba(120, 170, 200, 0.45)';
       ctx.beginPath();
-      for (const side of [-1, 1]) {
-        const ox = -uy * side * r * 0.5, oy = ux * side * r * 0.5;
-        ctx.moveTo(this.x + ox - ux * r, this.y + oy - uy * r);
-        ctx.lineTo(this.x + ox - ux * (r + speed * 0.12), this.y + oy - uy * (r + speed * 0.12));
-      }
-      ctx.stroke();
+      ctx.moveTo(bx + px * w1, by + py * w1);
+      ctx.quadraticCurveTo(mx + px * wm, my + py * wm, tx + px * w2, ty + py * w2);
+      ctx.lineTo(tx - px * w2, ty - py * w2);
+      ctx.quadraticCurveTo(mx - px * wm, my - py * wm, bx - px * w1, by - py * w1);
+      ctx.closePath();
+      ctx.fill();
     }
 
     ctx.save();
