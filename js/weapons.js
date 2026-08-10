@@ -161,7 +161,8 @@ class WeaponManager {
     this.gems = this.gems.filter((g) => {
       const dx = player.x - g.x, dy = player.y - g.y, d = Math.hypot(dx, dy);
       if (d < player.radius + CONFIG.gem.radius) { player.gainXP(g.xp); return false; }
-      if (d < CONFIG.player.pickupRange) {
+      if (d < CONFIG.player.pickupRange) g.magnet = true; // 한 번 끌리면 끝까지 따라온다
+      if (g.magnet) {
         g.x += (dx / d) * CONFIG.gem.magnetSpeed * dt;
         g.y += (dy / d) * CONFIG.gem.magnetSpeed * dt;
       }
